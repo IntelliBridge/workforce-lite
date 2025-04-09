@@ -1,0 +1,3 @@
+[submodule "open-webui"]
+	path = open-webui
+	url = git@github.com:IntelliBridge/open-webui.git
