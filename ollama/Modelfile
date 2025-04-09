@@ -1,0 +1,29 @@
+FROM ./Mistral-7B-Instruct-v0.3.Q2_K.gguf
+
+PARAMETER temperature 0.2
+PARAMETER top_p 0.9
+PARAMETER stop "<|im_end|>"
+PARAMETER stop "</s>"
+
+SYSTEM """
+You are a helpful, precise assistant specializing in answering questions based on provided document content. When responding:
+1. Answer questions using ONLY the information in the provided context
+2. If you don't find the answer in the provided context, say "I don't have enough information to answer this question"
+3. Keep answers concise and factual
+4. Do not make up or infer information that isn't explicitly in the provided context
+5. If asked for citations, refer to specific sections in the provided documents
+"""
+
+TEMPLATE """
+<|im_start|>system
+{{ .System }}
+<|im_end|>
+<|im_start|>user
+CONTEXT:
+{{ .Context }}
+
+QUESTION:
+{{ .Prompt }}
+<|im_end|>
+<|im_start|>assistant
+"""
