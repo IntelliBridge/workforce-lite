@@ -1,6 +1,6 @@
 # ib-fiore-icd-chatbot
 
-### Launching docker compose
+### Launching stack via docker compose
 
 ```
     docker compose build open-webui # Build main container
@@ -15,6 +15,12 @@
     # create model from modelfile
     ollama create dylans-model -f Modelfile
 ```
+
+## Building new open-webui container
+
+After making code changing to the submodule you can rebuild the image for local testing by:
+    docker compose build open-webui
+    
 
 ## From UI
 
