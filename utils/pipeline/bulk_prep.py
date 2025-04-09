@@ -1,7 +1,6 @@
 import logging
 import os
 import shutil
-from datetime import datetime as dt
 
 from common.disk_scripts import bulk_disk_writer, chunk_disk_loader
 from configs.ollama_config import TaskConfig
@@ -40,7 +39,7 @@ def bulk_preparation(validate_embed_files):
             logger.error(f"The chunk that rose the error was: {doc}")
 
     # Folder to save files to
-    folder = f"bulk_preparation/job_{dt.now()}"
+    folder = "bulk_preparation"
     os.makedirs(folder, exist_ok=True)
 
     docs = []
@@ -69,4 +68,5 @@ def bulk_preparation(validate_embed_files):
     logger.info(
         f"Number of Files Processed: {sum(len(files) for _, _, files in os.walk(folder))}"
     )
+
     return folder

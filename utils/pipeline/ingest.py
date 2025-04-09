@@ -2,7 +2,6 @@ import logging
 import os
 import shutil
 import time
-from datetime import datetime as dt
 
 from common.disk_scripts import bulk_disk_loader
 from common.utils import batch_bulk
@@ -59,6 +58,7 @@ def ingest_data(validate_bulk_preparation):
         logger.info(
             f"Number of failed inserts for batch {batch_count}: {(pre_existing_chunks + doc_count) - vectorDB.client.count(index=config.INDEX_NAME)['count']}"
         )
+
         print()
 
         return doc_count, batch_count

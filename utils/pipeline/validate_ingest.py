@@ -1,5 +1,4 @@
 import logging
-import shutil
 
 from configs.ollama_config import TaskConfig
 
@@ -8,6 +7,7 @@ logger = logging.getLogger(__name__)
 config = TaskConfig()
 
 FILE_FOLDER = config.FILE_FOLDER
+
 
 def validate_ingest_data(doc_count, pre_existing_chunks):
     """
@@ -43,9 +43,6 @@ def validate_ingest_data(doc_count, pre_existing_chunks):
 
     try:
         assert vectorDB.client.count(index=config.INDEX_NAME)["count"] == doc_count
-        
-        # Delete folder containing original documents from source.
-        shutil.rmtree(FILE_FOLDER)
     except AssertionError as e:
         logger.error(
             f"An assertion error occurred when testing if the number of chunks ingested matches the number of chunks expected to be ingested: {e}"

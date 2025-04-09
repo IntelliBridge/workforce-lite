@@ -1,14 +1,13 @@
-
+import json
 import logging
 from pathlib import Path
 from typing import Any, Dict, Iterator, List, Optional, Sequence, Type, Union
-import json
 
-from langchain_core.documents import Document
 from langchain_community.document_loaders.base import BaseLoader
 from langchain_community.document_loaders.directory import DirectoryLoader
 from langchain_community.document_loaders.pdf import PyPDFLoader
 from langchain_community.document_loaders.unstructured import UnstructuredFileLoader
+from langchain_core.documents import Document
 
 from common.disk_scripts import disk_writer
 from configs.ollama_config import TaskConfig
@@ -16,6 +15,7 @@ from configs.ollama_config import TaskConfig
 logger = logging.getLogger(__name__)
 
 config = TaskConfig()
+
 
 class CustomDirectoryLoader(DirectoryLoader):
     """
@@ -38,7 +38,7 @@ class CustomDirectoryLoader(DirectoryLoader):
         default_loader_cls: Type[BaseLoader] = UnstructuredFileLoader,
         default_loader_kwargs: Dict[str, Any] = None,
         file_extloader_mapping: Dict[str, Dict[str, Any]] = None,
-        **kwargs
+        **kwargs,
     ):
         """
         Initialize with path and configuration for different loaders.
@@ -56,7 +56,7 @@ class CustomDirectoryLoader(DirectoryLoader):
             pdf_loader_kwargs: Kwargs for PDF loader.
             default_loader_cls: Default loader for non-PDF files.
             default_loader_kwargs: Kwargs for default loader.
-            file_extloader_mapping: Optional mapping of file extensions to 
+            file_extloader_mapping: Optional mapping of file extensions to
                                     {loader_cls, loader_kwargs} dictionaries.
             **kwargs: Additional kwargs for DirectoryLoader.
         """
@@ -72,18 +72,18 @@ class CustomDirectoryLoader(DirectoryLoader):
             max_concurrency=max_concurrency,
             loader_cls=default_loader_cls,  # Will be dynamically replaced
             loader_kwargs={},  # Will be dynamically replaced
-            **kwargs
+            **kwargs,
         )
-        
+
         # Store loader configurations
         self.pdf_loader_cls = pdf_loader_cls
-        self.pdf_loader_kwargs = pdf_loader_kwargs or {"mode": "page"}
+        self.pdf_loader_kwargs = pdf_loader_kwargs or {"mode": "single"}
         self.default_loader_cls = default_loader_cls
         self.default_loader_kwargs = default_loader_kwargs or {}
-        
+
         # Optional mapping for additional file extensions
         self.file_extloader_mapping = file_extloader_mapping or {}
-        
+
     def _write_data(self, doc, folder):
         try:
             # Format metadata
@@ -125,7 +125,7 @@ class CustomDirectoryLoader(DirectoryLoader):
     ) -> Iterator[Document]:
         """
         Load a file with the appropriate loader based on its extension.
-        
+
         Args:
             item: File path.
             path: Directory path.
@@ -133,9 +133,9 @@ class CustomDirectoryLoader(DirectoryLoader):
         """
         if not item.is_file():
             return
-            
+
         file_ext = item.suffix.lower()
-        
+
         # Determine which loader and kwargs to use based on file extension
         if file_ext in self.file_extloader_mapping:
             # Use custom mapping if provided for this extension
@@ -150,18 +150,18 @@ class CustomDirectoryLoader(DirectoryLoader):
             # Use default loader
             loader_cls = self.default_loader_cls
             loader_kwargs = self.default_loader_kwargs
-            
+
         try:
             logger.debug(f"Processing file {str(item)} with {loader_cls.__name__}")
             loader = loader_cls(str(item), **loader_kwargs)
-            
+
             try:
                 for subdoc in loader.lazy_load():
                     yield subdoc
             except NotImplementedError:
                 for subdoc in loader.load():
                     yield subdoc
-                    
+
         except Exception as e:
             if self.silent_errors:
                 logger.warning(f"Error loading file {str(item)}: {e}")

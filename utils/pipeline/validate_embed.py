@@ -1,7 +1,6 @@
 import logging
 import os
 import shutil
-from datetime import datetime as dt
 
 from common.disk_scripts import chunk_disk_loader, chunk_disk_writer
 from configs.ollama_config import TaskConfig
@@ -50,7 +49,7 @@ def validate_embed_files(embed_files):
             )
 
     # Folder to save files to
-    folder = f"validate_embed_files/job_{dt.now()}"
+    folder = "validate_embed_files"
     os.makedirs(folder, exist_ok=True)
 
     docs = []
@@ -83,4 +82,5 @@ def validate_embed_files(embed_files):
     logger.info(
         f"Number of Files Processed: {sum(len(files) for _, _, files in os.walk(folder))}"
     )
+
     return folder

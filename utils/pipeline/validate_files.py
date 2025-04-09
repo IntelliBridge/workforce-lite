@@ -1,7 +1,6 @@
 import logging
 import os
 import shutil
-from datetime import datetime as dt
 
 from common.disk_scripts import disk_loader, disk_writer
 from configs.ollama_config import TaskConfig
@@ -11,15 +10,15 @@ logger = logging.getLogger(__name__)
 config = TaskConfig()
 
 
-def validate_clean_and_prep(clean_and_prep):
+def validate_files(retrieve_extract_files):
     """
     Validates that the data of the documents and metadata
-    in each list is as expected to ensure downstream tasks function
+    is as expected to ensure downstream tasks function
     appropriately
     Param:
-        clean_and_prep: Folder containing cleaned documents
+        retrieve_extract_files: Folder containing written documents
     Returns:
-        folder: Folder containing cleaned and validated documents
+        folder: Folder containing validated documents
     """
 
     def assert_write(doc, meta, folder):
@@ -45,21 +44,20 @@ def validate_clean_and_prep(clean_and_prep):
             )
 
     # Folder to save files to
-    folder = f"validate_clean_and_prep/job_{dt.now()}"
+    folder = "validate_files"
     os.makedirs(folder, exist_ok=True)
 
     docs = []
 
-    for blob in os.listdir(clean_and_prep):
+    for blob in os.listdir(retrieve_extract_files):
         try:
             # Add documents to docs list from disk space
-            disk_loader(docs, f"{clean_and_prep}/{blob}")
+            disk_loader(docs, f"{retrieve_extract_files}/{blob}")
         except Exception as e:
             logger.error(f"There was an error in the disk_loader function: {e}")
             continue
 
         if len(docs) == config.MEM_BATCH_SIZE:
-            # For each document and metadata in the list
             for i, (doc, meta) in enumerate(docs):
                 assert_write(doc, meta, folder)
             docs = []
@@ -70,9 +68,10 @@ def validate_clean_and_prep(clean_and_prep):
             assert_write(doc, meta, folder)
 
     # Delete previous folder
-    shutil.rmtree(clean_and_prep)
+    shutil.rmtree(retrieve_extract_files)
 
     logger.info(
         f"Number of Files Processed: {sum(len(files) for _, _, files in os.walk(folder))}"
     )
+
     return folder

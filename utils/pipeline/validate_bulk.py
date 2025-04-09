@@ -1,7 +1,6 @@
 import logging
 import os
 import shutil
-from datetime import datetime as dt
 
 from common.disk_scripts import bulk_disk_loader, bulk_disk_writer
 from configs.ollama_config import TaskConfig
@@ -42,7 +41,7 @@ def validate_bulk_preparation(bulk_preparation):
             )
 
     # Folder to save files to
-    folder = f"validate_bulk_preparation/job_{dt.now()}"
+    folder = "validate_bulk_preparation"
     os.makedirs(folder, exist_ok=True)
 
     docs = []
@@ -92,4 +91,5 @@ def validate_bulk_preparation(bulk_preparation):
     logger.info(
         f"Number of Files Processed: {sum(len(files) for _, _, files in os.walk(folder))}"
     )
+
     return folder

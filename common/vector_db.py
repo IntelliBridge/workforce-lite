@@ -8,6 +8,7 @@ from dotenv import find_dotenv, load_dotenv
 from langchain_core.documents import Document
 from opensearchpy import Index, OpenSearch
 
+
 class OpenSearchDB:
     """Customized OpenSearch class"""
 
@@ -90,27 +91,49 @@ class OpenSearchDB:
             "settings": {"index": {"knn": True, "knn.algo_param.ef_search": 512}},
             "mappings": {  # how do we store,
                 "properties": {
-                    "text":{
-                        "type": "text"
-                    },
+                    "text": {"type": "text"},
                     "vector_field": {
                         "type": "knn_vector",  # we are going to put
-                        "dimension": 1536,
+                        "dimension": 3072,
                         "method": {
                             "name": "hnsw",
                             "space_type": "l2",
                             "engine": "nmslib",
                             "parameters": {"ef_construction": 512, "m": 16},
                         },
-                    }
+                    },
                 }
             },
         }
         self.client.indices.create(index=index_name, body=index_body)
 
+        pipeline_body = {
+            "description": "Post processor for hybrid search",
+            "phase_results_processors": [
+                {
+                    "normalization-processor": {
+                        "normalization": {
+                            "technique": "min_max",
+                            "inputs": ["bm25", "knn"],
+                        },
+                        "combination": {
+                            "technique": "arithmetic_mean",
+                            "parameters": {"weights": [0.5, 0.5]},
+                        },
+                    }
+                }
+            ],
+        }
+
+        self.client.transport.perform_request(
+            method="PUT", url="/_search/pipeline/hybrid-pipeline", body=pipeline_body
+        )
+
         return Index(index_name), True
 
-    def load_context(self, embeddings_list: List[float], query_text: str, index_name: str) -> str:
+    def load_context(
+        self, embeddings_list: List[float], query_text: str, index_name: str, k=10
+    ) -> str:
         """
         Perform similarity search, obtain context,
         and return it
@@ -123,30 +146,29 @@ class OpenSearchDB:
         """
         # Searching parameters
         query_body = {
-            "size": 10,
+            "size": k,
             "query": {
                 "hybrid": {
                     "queries": [
-                    {
-                        "match": {
-                            "text": query_text
-                        }
-                    },
-                    {
-                        "knn": {
-                            "vector_field": {
-                                "vector": embeddings_list[0],
-                                "k": 10
+                        {
+                            "multi_match": {
+                                "query": query_text,
+                                "fields": ["text", "metadata"],
+                                "_name": "bm25",
                             }
-                        }
-                    }
+                        },
+                        {
+                            "knn": {
+                                "vector_field": {"vector": embeddings_list[0], "k": k}
+                            },
+                        },
                     ]
                 },
             },
             "_source": False,
             "fields": ["text", "metadata"],
+            "search_pipeline": "hybrid-pipeline",
         }
-        
 
         # Similarity search
         context = self.client.search(body=query_body, index=index_name)
@@ -162,7 +184,7 @@ class OpenSearchDB:
             text = re.sub(r"\s+", " ", text)
             meta = json.loads(key["fields"]["metadata"][0])
 
-            new_dict = {**{"Text": text}, **meta}
+            new_dict = {**{"text": text}, **meta}
 
             res.append(new_dict)
 

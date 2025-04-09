@@ -1,7 +1,6 @@
 import logging
 import os
 import shutil
-from datetime import datetime as dt
 
 from common.disk_scripts import disk_loader, disk_writer
 from common.utils import clean_and_transform_text
@@ -30,7 +29,7 @@ def clean_and_prep(validate_files):
             full_text = clean_and_transform_text(text)
 
             doc[0] = full_text
-            print("CLEAN", doc)
+
             # Write documents to disk
             disk_writer(doc, folder)
         except Exception as e:
@@ -40,7 +39,7 @@ def clean_and_prep(validate_files):
             logger.error(f"Encountered the file at index: {i}")
 
     # Folder to save files to
-    folder = f"clean_and_prep/job_{dt.now()}"
+    folder = "clean_and_prep"
     os.makedirs(folder, exist_ok=True)
 
     docs = []
@@ -70,4 +69,5 @@ def clean_and_prep(validate_files):
     logger.info(
         f"Number of Files Processed: {sum(len(files) for _, _, files in os.walk(folder))}"
     )
+
     return folder

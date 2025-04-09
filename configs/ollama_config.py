@@ -1,11 +1,12 @@
 import os
 from dataclasses import dataclass
 
-from dotenv import load_dotenv, find_dotenv
+from dotenv import find_dotenv, load_dotenv
 
 
 class EnvVarNotFoundError(Exception):
     """Raised when a required environment variable is not found."""
+
     pass
 
 
@@ -19,7 +20,7 @@ class TaskConfig:
         """
         # Load environment variables from file
         load_dotenv(find_dotenv())
-        
+
         # Settings
         self.MEM_BATCH_SIZE = int(os.getenv("MEM_BATCH_SIZE", 50))
         self.INGEST_MAX_BATCH_SIZE = int(os.getenv("INGEST_MAX_BATCH_SIZE", 100))

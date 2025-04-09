@@ -2,11 +2,11 @@ import json
 import logging
 import os
 import shutil
-from datetime import datetime as dt
+
+from langchain_ollama import OllamaEmbeddings
 
 from common.disk_scripts import chunk_disk_writer, disk_loader
 from configs.ollama_config import TaskConfig
-from langchain_ollama import OllamaEmbeddings
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +49,6 @@ def embed_files(validate_clean_and_prep):
 
         for i, chunk in enumerate(chunks):
             try:
-                print("EMBED", chunk, embeddings_list[i], metadata)
                 # Write chunks to disk space
                 chunk_disk_writer([chunk, embeddings_list[i], metadata], folder, i)
 
@@ -59,7 +58,7 @@ def embed_files(validate_clean_and_prep):
                 )
 
     # Folder to save files to
-    folder = f"embed_files/job_{dt.now()}"
+    folder = "embed_files"
     os.makedirs(folder, exist_ok=True)
 
     docs = []
@@ -90,4 +89,5 @@ def embed_files(validate_clean_and_prep):
     logger.info(
         f"Number of Files Processed: {sum(len(files) for _, _, files in os.walk(folder))}"
     )
+
     return folder

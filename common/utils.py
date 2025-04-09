@@ -3,8 +3,8 @@ import logging
 import os
 import re
 import time
-from typing import Union, List
 from datetime import datetime
+from typing import List, Union
 
 import nltk
 from nltk.stem import WordNetLemmatizer
@@ -15,6 +15,7 @@ nltk.download("wordnet")
 from common.vector_db import OpenSearchDB
 
 logger = logging.getLogger(__name__)
+
 
 def clean_and_transform_text(text: str) -> str:
     """
@@ -85,7 +86,7 @@ def batch_bulk(index: int, chunks: list, vectorDB: OpenSearchDB) -> None:
                 logger.info(f"Retrying bulk ingestion")
 
                 vectorDB.client.bulk(chunks[i:], refresh=True)
-                    # Bulk ingest that range of chunks
+                # Bulk ingest that range of chunks
                 vectorDB.client.bulk(chunks[i - index : i], refresh=True)
 
                 # Assign the remainder left to ingest
@@ -105,10 +106,6 @@ def batch_bulk(index: int, chunks: list, vectorDB: OpenSearchDB) -> None:
                 logger.info(f"Retrying bulk ingestion")
 
                 vectorDB.client.bulk(chunks[i - index : i], refresh=True)
-
-                # Assign the remainder left to ingest
-                remainder = i
-            return remainder
         else:
             try:
                 # Bulk ingest that range of chunks
