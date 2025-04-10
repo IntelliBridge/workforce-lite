@@ -94,7 +94,7 @@ class OpenSearchDB:
                     "text": {"type": "text"},
                     "vector_field": {
                         "type": "knn_vector",  # we are going to put
-                        "dimension": 3072,
+                        "dimension": 4096,
                         "method": {
                             "name": "hnsw",
                             "space_type": "l2",
