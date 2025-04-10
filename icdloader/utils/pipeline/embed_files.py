@@ -15,8 +15,6 @@ config = TaskConfig()
 # Chunking Variables
 CHUNK_SIZE = 4096
 OVERLAP = 1024
-# CHUNK_SIZE = 1024
-# OVERLAP = 512
 
 
 def embed_files(validate_clean_and_prep):
