@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: open-webui
+spec:
+  type: {{ .Values.openWebui.service.type }}
+  selector:
+    app: open-webui
+  ports:
+  - port: {{ .Values.openWebui.service.port }}
+    targetPort: 8080
+    {{- if eq .Values.openWebui.service.type "NodePort" }}
+    nodePort: {{ .Values.openWebui.service.nodePort }}
+    {{- end }}

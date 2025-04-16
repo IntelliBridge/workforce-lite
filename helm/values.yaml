@@ -1,0 +1,68 @@
+ollama:
+  image:
+    repository: ollama/ollama
+    tag: latest
+    pullPolicy: Always
+  service:
+    port: 11434
+  persistence:
+    enabled: true
+    size: 2Gi
+
+openWebui:
+  image:
+    repository: ghcr.io/open-webui/open-webui
+    tag: main
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8080
+    nodePort: 30000
+  persistence:
+    enabled: true
+    size: 1Gi
+  env:
+    OLLAMA_BASE_URL: http://ollama:11434
+    WEBUI_SECRET_KEY: ""
+    VECTOR_DB: opensearch
+    OPENSEARCH_URI: http://opensearch:9200
+    OPENSEARCH_USERNAME: admin
+    OPENSEARCH_PASSWORD: admin
+    OPENSEARCH_SSL: "False"
+    OPENSEARCH_CERT_VERIFY: "False"
+
+opensearch:
+  image:
+    repository: opensearchproject/opensearch
+    tag: 2.19.1
+    pullPolicy: IfNotPresent
+  service:
+    port: 9200
+    transportPort: 9600
+  persistence:
+    enabled: true
+    size: 8Gi
+  resources:
+    requests:
+      memory: 512Mi
+    limits:
+      memory: 512Mi
+  env:
+    cluster.name: opensearch
+    node.name: opensearch
+    discovery.type: single-node
+    bootstrap.memory_lock: true
+    OPENSEARCH_JAVA_OPTS: "-Xms512m -Xmx512m"
+    DISABLE_INSTALL_DEMO_CONFIG: "true"
+    DISABLE_SECURITY_PLUGIN: "true"
+
+opensearchDashboards:
+  image:
+    repository: opensearchproject/opensearch-dashboards
+    tag: 2.19.1
+    pullPolicy: IfNotPresent
+  service:
+    port: 5601
+  env:
+    OPENSEARCH_HOSTS: '["http://opensearch:9200"]'
+    DISABLE_SECURITY_DASHBOARDS_PLUGIN: "true"

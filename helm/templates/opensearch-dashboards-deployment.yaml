@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opensearch-dashboards
+  labels:
+    app: opensearch-dashboards
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: opensearch-dashboards
+  template:
+    metadata:
+      labels:
+        app: opensearch-dashboards
+    spec:
+      containers:
+      - name: opensearch-dashboards
+        image: "{{ .Values.opensearchDashboards.image.repository }}:{{ .Values.opensearchDashboards.image.tag }}"
+        imagePullPolicy: {{ .Values.opensearchDashboards.image.pullPolicy }}
+        ports:
+        - containerPort: 5601
+        env:
+        {{- range $key, $value := .Values.opensearchDashboards.env }}
+        - name: {{ $key }}
+          value: {{ $value | quote }}
+        {{- end }}
