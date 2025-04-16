@@ -1,34 +1,39 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ollama
+  annotations:
+    kompose.cmd: kompose convert -c -f docker-compose.yml --out kompose/
+    kompose.version: 1.35.0 (HEAD)
   labels:
-    app: ollama
+    io.kompose.service: ollama
+  name: ollama
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ollama
+      io.kompose.service: ollama
+  strategy:
+    type: Recreate
   template:
     metadata:
+      annotations:
+        kompose.cmd: kompose convert -c -f docker-compose.yml --out kompose/
+        kompose.version: 1.35.0 (HEAD)
       labels:
-        app: ollama
+        io.kompose.service: ollama
     spec:
       containers:
-      - name: ollama
-        image: "{{ .Values.ollama.image.repository }}:{{ .Values.ollama.image.tag }}"
-        imagePullPolicy: {{ .Values.ollama.image.pullPolicy }}
-        ports:
-        - containerPort: 11434
-        volumeMounts:
-        - name: ollama-data
-          mountPath: /root/.ollama
-        tty: true
+        - image: ollama/ollama:latest
+          name: ollama
+          ports:
+            - containerPort: 11434
+              protocol: TCP
+          tty: true
+          volumeMounts:
+            - mountPath: /root/.ollama
+              name: ollama
+      restartPolicy: Always
       volumes:
-      - name: ollama-data
-        {{- if .Values.ollama.persistence.enabled }}
-        persistentVolumeClaim:
-          claimName: ollama-pvc
-        {{- else }}
-        emptyDir: {}
-        {{- end }}
+        - name: ollama
+          persistentVolumeClaim:
+            claimName: ollama

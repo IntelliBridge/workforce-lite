@@ -1,14 +1,16 @@
 apiVersion: v1
 kind: Service
 metadata:
+  annotations:
+    kompose.cmd: kompose convert -c -f docker-compose.yml --out kompose/
+    kompose.version: 1.35.0 (HEAD)
+  labels:
+    io.kompose.service: open-webui
   name: open-webui
 spec:
-  type: {{ .Values.openWebui.service.type }}
-  selector:
-    app: open-webui
   ports:
-  - port: {{ .Values.openWebui.service.port }}
-    targetPort: 8080
-    {{- if eq .Values.openWebui.service.type "NodePort" }}
-    nodePort: {{ .Values.openWebui.service.nodePort }}
-    {{- end }}
+    - name: "3000"
+      port: 3000
+      targetPort: 8080
+  selector:
+    io.kompose.service: open-webui

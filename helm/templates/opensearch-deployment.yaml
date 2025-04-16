@@ -1,57 +1,55 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: opensearch
+  annotations:
+    kompose.cmd: kompose convert -c -f docker-compose.yml --out kompose/
+    kompose.version: 1.35.0 (HEAD)
   labels:
-    app: opensearch
+    io.kompose.service: opensearch
+  name: opensearch
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: opensearch
+      io.kompose.service: opensearch
+  strategy:
+    type: Recreate
   template:
     metadata:
+      annotations:
+        kompose.cmd: kompose convert -c -f docker-compose.yml --out kompose/
+        kompose.version: 1.35.0 (HEAD)
       labels:
-        app: opensearch
+        io.kompose.service: opensearch
     spec:
-      initContainers:
-      - name: increase-vm-max-map-count
-        image: busybox
-        command: ["sysctl", "-w", "vm.max_map_count=262144"]
-        securityContext:
-          privileged: true
       containers:
-      - name: opensearch
-        image: "{{ .Values.opensearch.image.repository }}:{{ .Values.opensearch.image.tag }}"
-        imagePullPolicy: {{ .Values.opensearch.image.pullPolicy }}
-        ports:
-        - containerPort: 9200
-          name: http
-        - containerPort: 9600
-          name: transport
-        env:
-        {{- range $key, $value := .Values.opensearch.env }}
-        - name: {{ $key }}
-          value: {{ $value | quote }}
-        {{- end }}
-        resources:
-          requests:
-            memory: {{ .Values.opensearch.resources.requests.memory }}
-          limits:
-            memory: {{ .Values.opensearch.resources.limits.memory }}
-        securityContext:
-          capabilities:
-            add:
-              - IPC_LOCK
-              - SYS_RESOURCE
-        volumeMounts:
-        - name: opensearch-data
-          mountPath: /usr/share/opensearch/data
+        - env:
+            - name: DISABLE_INSTALL_DEMO_CONFIG
+              value: "true"
+            - name: DISABLE_SECURITY_PLUGIN
+              value: "true"
+            - name: OPENSEARCH_JAVA_OPTS
+              value: -Xms512m -Xmx512m
+            - name: bootstrap.memory_lock
+              value: "true"
+            - name: cluster.name
+              value: opensearch
+            - name: discovery.type
+              value: single-node
+            - name: node.name
+              value: opensearch
+          image: opensearchproject/opensearch:2.19.1
+          name: opensearch
+          ports:
+            - containerPort: 9200
+              protocol: TCP
+            - containerPort: 9600
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /usr/share/opensearch/data
+              name: opensearch-data
+      restartPolicy: Always
       volumes:
-      - name: opensearch-data
-        {{- if .Values.opensearch.persistence.enabled }}
-        persistentVolumeClaim:
-          claimName: opensearch-pvc
-        {{- else }}
-        emptyDir: {}
-        {{- end }}
+        - name: opensearch-data
+          persistentVolumeClaim:
+            claimName: opensearch-data

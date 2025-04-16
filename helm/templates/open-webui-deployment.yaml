@@ -1,38 +1,54 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: open-webui
+  annotations:
+    kompose.cmd: kompose convert -c -f docker-compose.yml --out kompose/
+    kompose.version: 1.35.0 (HEAD)
   labels:
-    app: open-webui
+    io.kompose.service: open-webui
+  name: open-webui
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: open-webui
+      io.kompose.service: open-webui
+  strategy:
+    type: Recreate
   template:
     metadata:
+      annotations:
+        kompose.cmd: kompose convert -c -f docker-compose.yml --out kompose/
+        kompose.version: 1.35.0 (HEAD)
       labels:
-        app: open-webui
+        io.kompose.service: open-webui
     spec:
       containers:
-      - name: open-webui
-        image: "{{ .Values.openWebui.image.repository }}:{{ .Values.openWebui.image.tag }}"
-        imagePullPolicy: {{ .Values.openWebui.image.pullPolicy }}
-        ports:
-        - containerPort: 8080
-        env:
-        {{- range $key, $value := .Values.openWebui.env }}
-        - name: {{ $key }}
-          value: {{ $value | quote }}
-        {{- end }}
-        volumeMounts:
-        - name: open-webui-data
-          mountPath: /app/backend/data
+        - env:
+            - name: OLLAMA_BASE_URL
+              value: http://ollama:11434
+            - name: OPENSEARCH_CERT_VERIFY
+              value: "False"
+            - name: OPENSEARCH_PASSWORD
+              value: admin
+            - name: OPENSEARCH_SSL
+              value: "False"
+            - name: OPENSEARCH_URI
+              value: http://opensearch:9200
+            - name: OPENSEARCH_USERNAME
+              value: admin
+            - name: VECTOR_DB
+              value: opensearch
+            - name: WEBUI_SECRET_KEY
+          image: ghcr.io/open-webui/open-webui:main
+          name: open-webui
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /app/backend/data
+              name: open-webui
+      restartPolicy: Always
       volumes:
-      - name: open-webui-data
-        {{- if .Values.openWebui.persistence.enabled }}
-        persistentVolumeClaim:
-          claimName: open-webui-pvc
-        {{- else }}
-        emptyDir: {}
-        {{- end }}
+        - name: open-webui
+          persistentVolumeClaim:
+            claimName: open-webui

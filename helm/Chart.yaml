@@ -1,6 +1,8 @@
+name: kompose/
+description: A generated Helm Chart for kompose/ from Skippbox Kompose
+version: 0.0.1
 apiVersion: v2
-name: llm-stack
-description: A Helm chart for Ollama with Open-WebUI and OpenSearch
-type: application
-version: 0.1.0
-appVersion: "1.0.0"
+keywords:
+  - kompose/
+sources:
+home:
