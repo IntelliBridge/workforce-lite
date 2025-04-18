@@ -78,3 +78,19 @@ Stage and commit the submodule update in the main repository: The main repositor
 Push the changes to the main repository: Finally, push the changes to your main repository:
 
     git push origin main
+
+### Running helm chart
+
+There are two helm charts you can chose from: helm/ (basic using commercial images) and ironbank/ (using ironbank images). If you would like to run the ironbank helm chart you must first create a secrets registry:
+
+    kubectl create secret docker-registry regcred \
+      --docker-server=registry1.dso.mil \
+      --docker-username=your-username \
+      --docker-password=your-password \
+      --docker-email=your-email
+
+To run the helm chart simply:
+    helm install <name> ./chart
+
+
+    

@@ -1,0 +1,8 @@
+name: kompose/
+description: A generated Helm Chart for kompose/ from Skippbox Kompose
+version: 0.0.1
+apiVersion: v2
+keywords:
+  - kompose/
+sources:
+home:

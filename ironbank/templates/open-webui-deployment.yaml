@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -c -f docker-compose.yml --out kompose/
+    kompose.version: 1.35.0 (HEAD)
+  labels:
+    io.kompose.service: open-webui
+  name: open-webui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: open-webui
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -c -f docker-compose.yml --out kompose/
+        kompose.version: 1.35.0 (HEAD)
+      labels:
+        io.kompose.service: open-webui
+    spec:
+      imagePullSecrets:
+      - name: regcred
+      containers:
+        - env:
+            - name: OLLAMA_BASE_URL
+              value: http://ollama:11434
+            - name: OPENSEARCH_CERT_VERIFY
+              value: "False"
+            - name: OPENSEARCH_PASSWORD
+              value: admin
+            - name: OPENSEARCH_SSL
+              value: "False"
+            - name: OPENSEARCH_URI
+              value: http://opensearch:9200
+            - name: OPENSEARCH_USERNAME
+              value: admin
+            - name: VECTOR_DB
+              value: opensearch
+            - name: WEBUI_SECRET_KEY
+              value: monkey
+          image: registry1.dso.mil/ironbank/opensource/open-webui/open-webui:0.6.5
+          name: open-webui
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /app/backend/data
+              name: open-webui
+      restartPolicy: Always
+      volumes:
+        - name: open-webui
+          persistentVolumeClaim:
+            claimName: open-webui
