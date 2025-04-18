@@ -42,7 +42,7 @@ spec:
               value: opensearch
             - name: WEBUI_SECRET_KEY
               value: monkey
-          image: registry1.dso.mil/ironbank/opensource/open-webui/open-webui:0.6.5
+          image: dylanfrizzell/custom-open-webui:v0.6.5 #registry1.dso.mil/ironbank/opensource/open-webui/open-webui:0.6.5
           name: open-webui
           ports:
             - containerPort: 8080

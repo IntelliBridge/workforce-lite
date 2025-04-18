@@ -93,4 +93,43 @@ To run the helm chart simply:
     helm install <name> ./chart
 
 
-    
+### Deploying new code
+
+Install nvm and use node 22.
+
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
+    nvm install 22
+    nvm use 22 
+
+Check and make sure your node and npm versions are satisfactory with what is in the current package.json.
+    npm --version
+    node --version
+
+Make sure you have python3.11 installed
+    brew install python@3.11
+
+Make your changes to  the submodule, <it>open-webui</it>.
+
+Build a new wheel from open-webui and use to build the new docker image.
+
+    cd open-webui
+    python3.11 -m build --wheel
+    cp dist/<wheelfile.whl> ../open-webui-ironbank-container/
+    cd ../open-webui-ironbank-container/
+    # Make sure the requirements.txt file references the new wheel file
+    cat requirements.txt
+    docker build -t <imagename>:latest .
+    # Push image to image repository
+    docker login
+    docker tag <latestbuild>:latest <dockerhub-username>/<imagename>:<release version>
+    docker push <dockerhub-username>/<imagename>:<release version>
+
+You can now make sure the image references in the open-webui-deployment.yaml file is pointing to the image in dockerhub and do
+
+    helm install <name> ./<helm_chart>
+
+
+
+
+
+
