@@ -1,0 +1,12 @@
+{
+    "assignees": ["@benzimmer"],
+    "baseBranches": ["development"],
+    "automerge": false,
+    "packageRules": [
+   {
+     "datasources": ["docker"],
+     "packageNames": ["registry1.dso.mil/ironbank/opensource/python"],
+     "allowedVersions": ["3.11"]
+   }
+ ]
+}

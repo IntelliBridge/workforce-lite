@@ -1,0 +1,44 @@
+---
+apiVersion: v1
+
+name: "opensource/open-webui/open-webui"
+
+tags:
+- "0.6.5"
+- "0.6"
+- "0"
+- "latest"
+
+args:
+  BASE_IMAGE: "opensource/python"
+  BASE_TAG: "v3.11"
+
+labels:
+  org.opencontainers.image.title: "open-webui"
+  org.opencontainers.image.description: "Open WebUI is an extensible, feature-rich, and user-friendly self-hosted WebUI designed to operate entirely offline. It supports various LLM runners, including Ollama and OpenAI-compatible APIs. For more information, be sure to check out our Open WebUI Documentation."
+  org.opencontainers.image.licenses: "MIT"
+  org.opencontainers.image.url: "https://github.com/open-webui/open-webui"
+  org.opencontainers.image.vendor: "Iron Bank"
+  org.opencontainers.image.version: "0.6.5"
+  mil.dso.ironbank.image.keywords: "llm,chat,ollama,openai,gai,ai,ml,ui,oss"
+  mil.dso.ironbank.image.type: "opensource"
+  mil.dso.ironbank.product.name: "open-webui"
+
+resources:
+- filename: "sqlite.tar.gz"
+  url: "https://sqlite.org/2025/sqlite-autoconf-3490100.tar.gz"
+  validation:
+    type: sha256
+    value: "106642d8ccb36c5f7323b64e4152e9b719f7c0215acf5bfeac3d5e7f97b59254"
+
+
+maintainers:
+- email: "nicholas.parham.1@us.af.mil"
+  name: "Nicholas Parham"
+  username: "nparham"
+  cht_member: false
+
+- email: "zimmer_benjamin@bah.com"
+  name: "Benjamin Zimmer"
+  username: "benzimmer"
+  cht_member: false

@@ -1,0 +1,7 @@
+docker:
+ - name: Proof of Life
+   description: Confirm WebUI is running
+   commands:
+     - command: curl -o /dev/null -s -w "%{http_code}\n" http://localhost:8080
+       expected_output: 200
+       timeout_seconds: 180
