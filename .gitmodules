@@ -1,3 +1,6 @@
 [submodule "open-webui"]
 	path = open-webui
 	url = git@github.com:IntelliBridge/open-webui.git
+[submodule "open-webui-ironbank-container"]
+	path = open-webui-ironbank-container
+	url = ./open-webui-ironbank-container
