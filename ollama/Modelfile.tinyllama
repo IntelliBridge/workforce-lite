@@ -1,4 +1,4 @@
-FROM ./llama-3.2-1b-q4_k_m.gguf
+FROM ./TinyLlama-1.1B-Chat-v1.0
 
 PARAMETER temperature 0.2
 PARAMETER top_p 0.9

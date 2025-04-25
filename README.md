@@ -92,6 +92,29 @@ There are two helm charts you can chose from: helm/ (basic using commercial imag
 To run the helm chart simply:
     helm install <name> ./chart
 
+In order to see the appplication you will need to forward the frontend pod:
+
+    minikube service open-webui --url
+
+You can also view the minikube dashboard with:
+
+    minikube dashboard
+
+But you may need to install add-ons first:
+
+    minikube addons enable metrics-server
+    minikube addons enable ingress
+    minikube addons enable dashboard
+
+In order to activate the model into the application:
+
+    kubectl get pods # Use this to find the ollama pod name
+    kubectl cp /path/to/model.gguf <ollama-pod>:/tmp/
+    kubectl cp /path/to/Modelfile <ollama-pod>:/tmp/
+    kubectl exec -it <ollama-pod> -- bash
+    cd /tmp
+    ollama create dylans-model -f Modelfile
+
 
 ### Deploying new code
 
@@ -124,12 +147,28 @@ Build a new wheel from open-webui and use to build the new docker image.
     docker tag <latestbuild>:latest <dockerhub-username>/<imagename>:<release version>
     docker push <dockerhub-username>/<imagename>:<release version>
 
+Build a new wheel from opensearch and use to build the new docker image.
+
+    cd opensearch-ironbank-container
+    python3.11 -m build --wheel
+    cp dist/<wheelfile.whl> ../opensearch-ironbank-container/
+    cd ../opensearch-ironbank-container/
+    # Make sure the requirements.txt file references the new wheel file
+    cat requirements.txt
+    docker build -t <imagename>:latest .
+    # Push image to image repository
+    docker login
+    docker tag <latestbuild>:latest <dockerhub-username>/<imagename>:<release version>
+    docker push <dockerhub-username>/<imagename>:<release version>
+
 You can now make sure the image references in the open-webui-deployment.yaml file is pointing to the image in dockerhub and do
 
     helm install <name> ./<helm_chart>
 
 
+In order to see the application you will need to forward the frontend from minikube:
 
+    minikube service open-webui --url
 
 
 

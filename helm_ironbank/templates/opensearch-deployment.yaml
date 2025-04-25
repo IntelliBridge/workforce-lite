@@ -31,15 +31,15 @@ spec:
             - name: DISABLE_SECURITY_PLUGIN
               value: "true"
             - name: OPENSEARCH_JAVA_OPTS
-              value: -Xms512m -Xmx512m
+              value: "-Xms512m -Xmx512m"
             - name: bootstrap.memory_lock
               value: "true"
             - name: cluster.name
-              value: opensearch
+              value: "opensearch"
             - name: discovery.type
-              value: single-node
+              value: "single-node"
             - name: node.name
-              value: opensearch
+              value: "opensearch"
           image: registry1.dso.mil/ironbank/afrl-dcgs/stream/opensearch-project/opensearch:2.19.1
           name: opensearch
           ports:

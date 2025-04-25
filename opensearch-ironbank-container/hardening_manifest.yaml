@@ -1,0 +1,33 @@
+---
+apiVersion: v1
+
+name: "afrl-dcgs/stream/opensearch-project/opensearch"
+
+tags:
+- "2.19.1"
+- "latest"
+
+args:
+  BASE_IMAGE: "redhat/ubi/ubi9"
+  BASE_TAG: "9.5"
+
+labels:
+  org.opencontainers.image.title: "OpenSearch"
+  org.opencontainers.image.description: "Distributed RESTful search engine"
+  org.opencontainers.image.licenses: "Apache-2.0"
+  org.opencontainers.image.url: "https://www.opensearch.org"
+  org.opencontainers.image.vendor: "Nine Hill Tech"
+  org.opencontainers.image.version: "2.19.1"
+  mil.dso.ironbank.image.keywords: "opensearch"
+  mil.dso.ironbank.image.type: "opensource"
+  mil.dso.ironbank.product.name: "OpenSearch"
+
+resources:
+- tag: docker.io/opensearchproject/opensearch:2.19.1
+  url: docker://docker.io/opensearchproject/opensearch@sha256:72fe2fc84be8295906b8efca020b46c58ed45c8da60cd9b8b49e1991e38e89a4
+
+maintainers:
+- name: "Greg Hasseler"
+  email: "greg.hasseler@ninehilltech.com"
+  username: "ghasseler"
+  cht_member: false
