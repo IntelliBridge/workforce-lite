@@ -150,11 +150,6 @@ Build a new wheel from open-webui and use to build the new docker image.
 Build a new wheel from opensearch and use to build the new docker image.
 
     cd opensearch-ironbank-container
-    python3.11 -m build --wheel
-    cp dist/<wheelfile.whl> ../opensearch-ironbank-container/
-    cd ../opensearch-ironbank-container/
-    # Make sure the requirements.txt file references the new wheel file
-    cat requirements.txt
     docker build -t <imagename>:latest .
     # Push image to image repository
     docker login
@@ -164,7 +159,6 @@ Build a new wheel from opensearch and use to build the new docker image.
 You can now make sure the image references in the open-webui-deployment.yaml file is pointing to the image in dockerhub and do
 
     helm install <name> ./<helm_chart>
-
 
 In order to see the application you will need to forward the frontend from minikube:
 
