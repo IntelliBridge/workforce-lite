@@ -40,7 +40,7 @@ spec:
               value: "single-node"
             - name: node.name
               value: "opensearch"
-          image: registry1.dso.mil/ironbank/afrl-dcgs/stream/opensearch-project/opensearch:2.19.1
+          image: dylanfrizzell/opensearch-custom:dev # registry1.dso.mil/ironbank/afrl-dcgs/stream/opensearch-project/opensearch:2.19.1
           name: opensearch
           ports:
             - containerPort: 9200
