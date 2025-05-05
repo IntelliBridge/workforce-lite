@@ -18,6 +18,9 @@ COPY open_webui*.whl /tmp
 
 RUN dnf upgrade -y --nodocs && \
     dnf install gcc -y && \
+    dnf install poppler-utils -y && \
+    dnf install mesa-libGL -y && \
+    dnf install python3-opencv -y && \
     dnf clean all && \
     rm -rf /var/cache/dnf && \
     tar xzf /tmp/sqlite.tar.gz -C /tmp && \
@@ -32,7 +35,7 @@ USER webui
 
 COPY requirements.txt /home/webui/
 
-RUN pip install --user --no-cache-dir -r requirements.txt
+RUN pip install --user --no-cache-dir --timeout=5000 -r requirements.txt
 
 # ports
 EXPOSE 8080

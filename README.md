@@ -118,6 +118,38 @@ In order to activate the model into the application:
 
 ### Deploying new code
 
+Debian
+
+    install python 3.11
+    install nvm 
+    install node (version 22)
+    get your registry1 crednetials
+     - log in to platform 1 using SSO
+     - go to harbor: https://registry1.dso.mil/harbor/projects
+     - Get username and CLI token from top right 
+     - docker login -u <username> -p <cli-secret> registry1.dso.mil
+    login to registry1
+    build wheel
+    build open-webui iamge
+    build opensearch image
+    edit docker compose
+
+    nvidia runtime: 
+    sudo nvidia-ctk runtime configure --runtime=docker
+    sudo systemctl restart docker
+
+add gpu resource to docker
+
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    
+
+
 Install nvm and use node 22.
 
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
