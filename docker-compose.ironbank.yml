@@ -9,6 +9,20 @@ services:
     image: registry1.dso.mil/ironbank/opensource/ollama/ollama:0.6.2
     ports:
       - 11434:11434
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+#    deploy:
+#      resources:
+#        reservations:
+#          devices:
+#            - count: 1 # alternatively, use `count: all` for all GPUs
+#              capabilities: [gpu]
+#    runtime: nvidia
 
   open-webui:
     build:
@@ -16,7 +30,7 @@ services:
       args:
         OLLAMA_BASE_URL: '/ollama'
       dockerfile: Dockerfile
-    image: dylanfrizzell/custom-open-webui:v0.6.5 
+    image: custom-open-webui:latest
     container_name: open-webui
     volumes:
       - open-webui:/app/backend/data
@@ -37,7 +51,7 @@ services:
       - host.docker.internal:host-gateway
     restart: unless-stopped
   opensearch:
-      image: dylanfrizzell/opensearch-custom:dev # registry1.dso.mil/ironbank/afrl-dcgs/stream/opensearch-project/opensearch:2.19.1
+      image: opensearch:latest # registry1.dso.mil/ironbank/afrl-dcgs/stream/opensearch-project/opensearch:2.19.1
       container_name: opensearch
       environment:
         - cluster.name=opensearch

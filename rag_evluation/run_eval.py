@@ -8,16 +8,16 @@ from ragas.run_config import RunConfig
 
 import requests
 import json
-
+import os
 from test_data.test_data import questions, ground_truths
 from ChatCompletionsClient import ChatCompletionsClient
 import pdb
   
-collection_name = "Meeting Notes"
-collection_id = "5d1a65f0-c501-4e24-b27b-f77520893115" # These values are only good on my local laptop (no secrets leaking)
+collection_name = "new 4"
+collection_id = "6e69d3f9-c7e7-433f-b63f-087bf0a136ad" # These values are only good on my local laptop (no secrets leaking)
 # token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJhMzUwOTk0LTg4YjUtNGIyMi04NDA4LTk1MjhlZjU3ZGIyZiJ9.R0Atkx8qy5eFUq_NMuyaaQaaGYHzL0zRK_5sshImGK0"
-token = "sk-cc18c4d2da1d4d8f8f512e1e4796a109" # These values are only good on my local laptop (no secrets leaking)
-model = "dylans-model:latest" 
+token = "sk-5a487943ed3e4f548cb3ad4c2d7e6751" # These values are only good on my local laptop (no secrets leaking)
+model = "gemma3:12b" 
 
 client = ChatCompletionsClient(token)
 # Inference
@@ -42,26 +42,31 @@ for query, truth in zip(questions, ground_truths):
             }
         )
     
+df = []
+for idx, single_dataset in enumerate(dataset):
+	single_dataset_list = [single_dataset]
+	evaluation_dataset = EvaluationDataset.from_list(single_dataset_list)
 
-evaluation_dataset = EvaluationDataset.from_list(dataset)
+	ollama_model = OllamaLLM(model=model)
 
-ollama_model = OllamaLLM(model="dylans-model:latest")
+	evaluator_llm = LangchainLLMWrapper(ollama_model)
 
-evaluator_llm = LangchainLLMWrapper(ollama_model)
-
-result = evaluate(dataset=evaluation_dataset, 
+	result = evaluate(dataset=evaluation_dataset, 
                   metrics=[
-                           LLMContextRecall(), 
-                           LLMContextPrecisionWithReference(), 
-                           Faithfulness(), 
-                           FactualCorrectness(), 
-                           NoiseSensitivity()
+                           #LLMContextRecall(), 
+                           #LLMContextPrecisionWithReference(), 
+                           #Faithfulness(), 
+                           FactualCorrectness() 
+                           #NoiseSensitivity()
                            ],
                   llm=evaluator_llm,
                   run_config=RunConfig(timeout=3600,))
+	df.append(result.to_pandas())
 
+results_file = "results.csv"
+if not os.path.exists(results_file):
+    with open(results_file, 'w') as file:
+        file.write("")
 
-df = result.to_pandas()
-df.to_csv("results")
-
+df.to_csv(f"results.csv")
 

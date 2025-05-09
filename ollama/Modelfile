@@ -1,4 +1,4 @@
-FROM ./llama-3.2-1b-q4_k_m.gguf
+FROM /tmp/Mistral-7B-Instruct-v0.3-Q2_K.gguf
 
 PARAMETER temperature 0.2
 PARAMETER top_p 0.9
