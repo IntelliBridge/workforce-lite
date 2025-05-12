@@ -21,7 +21,6 @@
 After making code changing to the submodule you can rebuild the image for local testing by:
     docker compose build open-webui
     
-
 ## From UI
 
 Once on the UI you can create a knowledgebase from "Workspace>Knowledge> '+' ".
@@ -165,4 +164,51 @@ In order to see the application you will need to forward the frontend from minik
     minikube service open-webui --url
 
 
+# Application Navigation and Usage Notes
 
+### to add pdfs to chatbot 
+- From desktop
+	- Open browser of choice
+	- search `localhost:3000`
+	- sign in if asked
+	 - Workspace on left bar
+	 - Knowledge tab center top of window
+	 - create new collection or add to existing
+	 - click the + icon to select option
+	 - click upload file or folder
+	 - navigate and upload file/folder for training
+
+### Access web page 
+- make sure docker containers are up
+	- `sudo docker ps`
+- if not up
+	- `cd /home/user/projects/ib-fiore-icd-chatbot`
+	- `sudo docker compose -f docker-compose.ironbank.yml up`
+- in a browser, search: `localhoast:3000`
+
+### setting up model with .gguf file
+- `sudo docker cp <model_name>.gguf <ollama_ID>:/tmp`
+- `sudo docker cp Modelfile <ollama_ID>:/tmp`
+- `sudo docker exec -u root -it <ollama_ID> bash` to get into vm
+	- `cd /tmp/`
+	- `ollama create <model_name>`
+
+### Query question to specific knowledge collection
+- `#new stuff` to knowledge base name
+
+### to configure the model 
+- name in bottom left
+- settings
+- documents in top right
+- embedding model set default-> ollamma
+- specify model name below
+- set hybrid search to on
+- give it the same model name for re-ranking model
+- change top k to 6 (double the current)
+
+### current models in use:
+- Gemma3:12b
+- nomic-embed-text
+- Mistral
+
+Models can be found at 'https://huggingface.co/QuantFactory/Mistral-7B-v0.3-GGUF/tree/main'
