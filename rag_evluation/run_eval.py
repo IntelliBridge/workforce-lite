@@ -13,11 +13,11 @@ from test_data.test_data import questions, ground_truths
 from ChatCompletionsClient import ChatCompletionsClient
 import pdb
   
-collection_name = "new 4"
-collection_id = "6e69d3f9-c7e7-433f-b63f-087bf0a136ad" # These values are only good on my local laptop (no secrets leaking)
+collection_name = "new 2"
+collection_id = "2019f262-82cd-49b8-a260-35e7b6fea966" # These values are only good on my local laptop (no secrets leaking)
 # token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJhMzUwOTk0LTg4YjUtNGIyMi04NDA4LTk1MjhlZjU3ZGIyZiJ9.R0Atkx8qy5eFUq_NMuyaaQaaGYHzL0zRK_5sshImGK0"
-token = "sk-5a487943ed3e4f548cb3ad4c2d7e6751" # These values are only good on my local laptop (no secrets leaking)
-model = "gemma3:12b" 
+token = "sk-d2e6c4d14d4444f8bcc13fd4a8217f83" # These values are only good on my local laptop (no secrets leaking)
+model = "test:latest" 
 
 client = ChatCompletionsClient(token)
 # Inference
@@ -61,12 +61,14 @@ for idx, single_dataset in enumerate(dataset):
                            ],
                   llm=evaluator_llm,
                   run_config=RunConfig(timeout=3600,))
-	df.append(result.to_pandas())
+	df = result.to_pandas()
+	df.to_csv(f"results_{idx}.csv")
+#df.append(result.to_pandas())
 
-results_file = "results.csv"
-if not os.path.exists(results_file):
-    with open(results_file, 'w') as file:
-        file.write("")
+#results_file = "results.csv"
+#if not os.path.exists(results_file):
+#    with open(results_file, 'w') as file:
+#        file.write("")
 
-df.to_csv(f"results.csv")
+#df.to_csv(f"results.csv")
 
