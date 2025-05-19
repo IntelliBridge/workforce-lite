@@ -15,19 +15,15 @@ WORKDIR /home/webui/
 # Copy the tarred model file into the Docker image
 COPY models--unstructuredio--yolo_x_layout.tar.gz /tmp/
 
-# Create the destination directory
-RUN mkdir -p .cache/huggingface/hub/
-
 # Extract the tar file to the correct location
-RUN tar -xzf /tmp/models--unstructuredio--yolo_x_layout.tar.gz -C .cache/huggingface/hub/ && \
-    rm /tmp/models--unstructuredio--yolo_x_layout.tar.gz
-
 # Make sure the extracted files have the correct permissions
 # (adjust the user/group as needed for your container)
-RUN chown -R root:root /home/webui/.cache/huggingface/hub/
+RUN mkdir -p .cache/huggingface/hub/ && tar -xzf /tmp/models--unstructuredio--yolo_x_layout.tar.gz -C .cache/huggingface/hub/ && \
+    rm /tmp/models--unstructuredio--yolo_x_layout.tar.gz && chown -R root:root /home/webui/.cache/huggingface/hub/
+
 
 # resources
-COPY sqlite.tar.gz /tmp
+COPY sqlite.tar.gz /tmp 
 COPY open_webui*.whl /tmp
 
 WORKDIR /home/webui/ocr_build

@@ -120,25 +120,33 @@ In order to activate the model into the application:
 
 Debian
 
-    install python 3.11
+    install python 3.11 
     install nvm 
-    install node (version 22)
+    install node (version 22) (nvm use 22)
     get your registry1 crednetials
-     - log in to platform 1 using SSO
+     - log in to platform 1 using SSO, you may need to create an account (https://p1.dso.mil/)
      - go to harbor: https://registry1.dso.mil/harbor/projects
      - Get username and CLI token from top right 
-     - docker login -u <username> -p <cli-secret> registry1.dso.mil
     login to registry1
-    build wheel
-    build open-webui iamge
-    build opensearch image
-    edit docker compose
+     - docker login -u <username> -p <cli-secret> registry1.dso.mil
+    build wheel (see instructions below)
+    build open-webui image (see instruction below)
+    build opensearch image (see instrctions below)
+    edit docker compose if needed
+     - If you are using different image names this should be reflected in compose file
+     - If you are using GPUs be sure and ammend dockerfile or use gpu enable docker-compose file
 
-    nvidia runtime: 
+
+#### GPU resources 
+
+
+In order to run on GPU hardware one must have all of the nvidia drivers working
+as well as the nvidia runtime for docker: 
+
     sudo nvidia-ctk runtime configure --runtime=docker
     sudo systemctl restart docker
 
-add gpu resource to docker
+Your docker compose file must be configured to use gpu resources: 
 
     deploy:
       resources:
@@ -148,7 +156,7 @@ add gpu resource to docker
               count: 1
               capabilities: [gpu]
     
-
+#### Installing and using nvm
 
 Install nvm and use node 22.
 
@@ -162,6 +170,9 @@ Check and make sure your node and npm versions are satisfactory with what is in 
 
 Make sure you have python3.11 installed
     brew install python@3.11
+
+
+#### In order to develop changes 
 
 Make your changes to  the submodule, <it>open-webui</it>.
 
