@@ -16,7 +16,7 @@ The scraper modules are located in [`open_webui/backend/open_webui/retrieval/scr
 - **custom_partition.py** - Modified partition logic with custom enhancements
 - **layout.py** - Layout detection and processing
 - **partition_pdf_camelot.py** - Core integration between Unstructured and Camelot for table-aware PDF processing
-- **utils.py** - Utility functions for scraping operations
+- **utils.py** - Utility functions for operations and is an important script that contains the download_if_needed_and_get_local_path function. This function specifies the model revision that will be chosen with huggingface. Enables code to find the specific model moved into the image.
 - **yolox.py** - YOLOX model integration for object detection
 
 ### Loader Components
